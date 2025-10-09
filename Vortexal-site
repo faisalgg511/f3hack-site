@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>Vortexal</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at center, #0f0f0f, #1a1a2e);
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 5em;
+      background: linear-gradient(to right, #00f5ff, #ff00c8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #00f5ff; }
+      to { text-shadow: 0 0 20px #ff00c8; }
+    }
+
+    p {
+      font-size: 1.5em;
+      color: #ccc;
+      text-align: center;
+      max-width: 600px;
+      margin-top: 1em;
+    }
+
+    .btn {
+      margin-top: 2em;
+      padding: 14px 28px;
+      background-color: #00f5ff;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #ff00c8;
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .vortex {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border: 2px solid #00f5ff;
+      border-radius: 50%;
+      animation: spin 10s linear infinite;
+      opacity: 0.1;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="vortex"></div>
+  <h1>Vortexal</h1>
+  <p>مرحبًا بك في عالم Vortexal، حيث التقنية تلتقي بالإبداع، وتتحول الأفكار إلى واقع ينبض بالحياة.</p>
+  <a href="YOUR-LINK-HERE" class="btn">ابدأ رحلتك</a>
+</body>
+</html>
