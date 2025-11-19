@@ -2,82 +2,199 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>Vortexal</title>
+  <title>منجم فيصل: ورشة الحداد</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background: radial-gradient(circle at center, #0f0f0f, #1a1a2e);
-      font-family: 'Segoe UI', sans-serif;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    h1 {
-      font-size: 5em;
-      background: linear-gradient(to right, #00f5ff, #ff00c8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: glow 2s infinite alternate;
-    }
-
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #00f5ff; }
-      to { text-shadow: 0 0 20px #ff00c8; }
-    }
-
-    p {
-      font-size: 1.5em;
-      color: #ccc;
+      font-family: sans-serif;
       text-align: center;
-      max-width: 600px;
-      margin-top: 1em;
+      background: linear-gradient(to bottom, #d8c4f3, #b49be0);
+      direction: rtl;
+      color: #2e1f4f;
     }
-
-    .btn {
-      margin-top: 2em;
-      padding: 14px 28px;
-      background-color: #00f5ff;
-      color: #000;
+    h1 { font-size: 32px; margin-top: 20px; }
+    button {
+      background-color: #6a4fb3;
+      color: white;
       border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      font-size: 1em;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 18px;
+      margin: 10px;
       cursor: pointer;
-      transition: 0.3s;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
     }
-
-    .btn:hover {
-      background-color: #ff00c8;
-      color: #fff;
-      transform: scale(1.05);
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
     }
-
-    .vortex {
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      border: 2px solid #00f5ff;
-      border-radius: 50%;
-      animation: spin 10s linear infinite;
-      opacity: 0.1;
+    button:hover { transform: scale(1.05); }
+    #result, #score, #inventory, #shop, #code-result {
+      margin-top: 15px;
+      font-size: 20px;
     }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    #shop-items, #forge-area {
+      margin-top: 10px;
+    }
+    .item {
+      background-color: #f3eaff;
+      border: 1px solid #c2aee2;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 10px auto;
+      width: 80%;
+      font-size: 18px;
+    }
+    input {
+      padding: 5px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
     }
   </style>
 </head>
 <body>
-  <div class="vortex"></div>
-  <h1>Vortexal</h1>
-  <p>مرحبًا بك في عالم Vortexal، حيث التقنية تلتقي بالإبداع، وتتحول الأفكار إلى واقع ينبض بالحياة.</p>
-  <a href="YOUR-LINK-HERE" class="btn">ابدأ رحلتك</a>
-</body>
-</html>
+  <h1>⛏️ منجم فيصل: ورشة الحداد</h1>
+  <button id="mineBtn" onclick="mine()">اضرب البيكاكس</button>
+  <button onclick="sellToWizard()">🧙‍♂️ بيع للساحر</button>
+  <div id="result"></div>
+  <div id="score">النقاط: 0</div>
+  <div id="inventory">🧺 المخزون: لا شيء بعد</div>
+
+  <h2>🛒 المتجر (يتغير كل دقيقة)</h2>
+  <div id="shop-items"></div>
+
+  <h2>🪓 ورشة الحداد</h2>
+  <div id="forge-area"></div>
+
+  <h3>🎁 أدخل كود سري:</h3>
+  <input type="text" id="code-input" placeholder="اكتب الكود هنا">
+  <button onclick="redeemCode()">تفعيل</button>
+  <div id="code-result"></div>
+
+<script>
+let score = 0;
+let inventory = {};
+let usedCodes = new Set();
+let canMine = true;
+let currentPickaxe = "خشب";
+
+const pickaxes = {
+  "خشب": { luck: 0 },
+  "حجر": { luck: 5, cost: { "🪨 حجر عادي": 5 } },
+  "حديد": { luck: 10, cost: { "🪨 حجر عادي": 5, "🪙 قولد": 5 } },
+  "ألماس": { luck: 20, cost: { "💎 ألماس": 10, "💚 زمرد": 5 } },
+  "نذرايت": { luck: 30, cost: { "🟪 نذرايت": 10, "💎 ألماس": 10 } }
+};
+
+const items = [
+  { name: "🟪 نذرايت", chance: 0.05, value: 5000 },
+  { name: "💎 ألماس", chance: 0.5, value: 3000 },
+  { name: "🪙 قولد", chance: 2, value: 1500 },
+  { name: "🔴 ريدستون", chance: 4, value: 1000 },
+  { name: "🪨 حجر عادي", chance: 20, value: 150 },
+  { name: "💚 زمرد", chance: 0.5, value: 4000 },
+  { name: "🧱 حجر رملي", chance: 72.45, value: 50 }
+];
+
+const codes = {
+  "FaisalPower": { name: "💚 زمرد", value: 4000 },
+  "CMDHunter": { name: "🟪 نذرايت", value: 5000 },
+  "GoldRush": { name: "🪙 قولد", value: 1500 },
+  "tr71": { name: "🟪 نذرايت", value: 10 },
+  "chicken511": { name: "💎 ألماس", value: 500 },
+  "cmdnaggaday": { name: "🟪 نذرايت", value: 100 }
+};
+
+function mine() {
+  if (!canMine) return;
+  canMine = false;
+  document.getElementById("mineBtn").disabled = true;
+  setTimeout(() => {
+    canMine = true;
+    document.getElementById("mineBtn").disabled = false;
+  }, 10);
+
+  const luck = pickaxes[currentPickaxe].luck;
+  const rand = Math.random() * 100;
+  let sum = 0;
+  for (let item of items) {
+    sum += item.chance + (item.chance * luck / 100);
+    if (rand < sum) {
+      inventory[item.name] = (inventory[item.name] || 0) + 1;
+      document.getElementById("result").innerText = `🎉 حصلت على ${item.name}!`;
+      updateInventory();
+      return;
+    }
+  }
+}
+
+function updateInventory() {
+  let text = "🧺 المخزون:\n";
+  for (let key in inventory) {
+    text += `${key} × ${inventory[key]} | `;
+  }
+  document.getElementById("inventory").innerText = text;
+}
+
+function sellToWizard() {
+  let total = 0;
+  for (let item of items) {
+    if (inventory[item.name]) {
+      total += inventory[item.name] * item.value;
+    }
+  }
+  score += total;
+  inventory = {};
+  document.getElementById("score").innerText = `النقاط: ${score}`;
+  document.getElementById("result").innerText = `💰 بعت كل شيء للساحر بـ ${total} نقطة!`;
+  updateInventory();
+}
+
+function generateShop() {
+  const shop = document.getElementById("shop-items");
+  shop.innerHTML = "";
+  const shuffled = [...items].sort(() => 0.5 - Math.random());
+  const offers = shuffled.slice(0, 3);
+  for (let offer of offers) {
+    const price = offer.value * 2;
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `
+      🛍️ ${offer.name} مقابل ${price} نقطة
+      <button onclick="buyItem('${offer.name}', ${price})">شراء</button>
+    `;
+    shop.appendChild(div);
+  }
+}
+
+function buyItem(name, price) {
+  if (score >= price) {
+    score -= price;
+    inventory[name] = (inventory[name] || 0) + 1;
+    document.getElementById("score").innerText = `النقاط: ${score}`;
+    updateInventory();
+    document.getElementById("result").innerText = `✅ اشتريت ${name}!`;
+  } else {
+    document.getElementById("result").innerText = "❌ ما عندك نقاط كافية!";
+  }
+}
+
+function redeemCode() {
+  const input = document.getElementById("code-input").value.trim();
+  if (usedCodes.has(input)) {
+    document.getElementById("code-result").innerText = "❌ هذا الكود تم استخدامه من قبل!";
+    return;
+  }
+  if (codes[input]) {
+    const reward = codes[input];
+    inventory[reward.name] = (inventory[reward.name] || 0) + reward.value;
+    usedCodes.add(input);
+    document.getElementById("code-result").innerText = `🎉 حصلت على ${reward.value} من ${reward.name}!`;
+    updateInventory();
+  } else {
+    document.getElementById("code-result").innerText = "❌ كود غير صالح";
+  }
+}
+
+function generateForge()
