@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>منجم </title>
+  <title>منجم فيصل</title>
   <style>
     body {
       font-family: sans-serif;
@@ -52,7 +52,7 @@
   </style>
 </head>
 <body>
-  <h1>⛏️ منجم </h1>
+  <h1>⛏️ منجم فيصل</h1>
   <button id="mineBtn" onclick="mine()">اضرب البيكاكس</button>
   <button onclick="sellToWizard()">🧙‍♂️ بيع للساحر</button>
   <div id="result"></div>
