@@ -85,11 +85,20 @@
     ];
 
     const codes = {
-   
-      "FaisalPower": { name: "💚 زمرد", value: 4000 },
-      "CMDHunter": { name: "🟪 نذرايت", value: 5000 },
-      "GoldRush": { name: "🪙 قولد", value: 1500 }
-    };
+  "diamond100": { name: "💎 ألماس", value: 100 },
+  "goldx50": { name: "🪙 قولد", value: 50 },
+  "startboost": { points: 5000 },
+  "redstoneRain": { name: "🔴 ريدستون", value: 30 },
+  "stoneStack": { name: "🪨 حجر عادي", value: 100 },
+  "sandstorm": { name: "🧱 حجر رملي", value: 200 },
+  "emeraldKing": { name: "💚 زمرد", value: 25 },
+  "ultraCode": { name: "💎 ألماس", value: 200 },
+  "wizardGift": { points: 10000 },
+  "secretBox": { name: "💎 ألماس", value: 50 },
+  "luckyStrike": { name: "🪙 قولد", value: 20 },
+  "mineMaster": { name: "🪨 حجر عادي", value: 10 },
+  "resetBonus": { name: "💎 ألماس", value: 10, points: 2000 }
+};
 
     function mine() {
       if (!canMine) return;
@@ -187,3 +196,4 @@
   </script>
 </body>
 </html>
+
