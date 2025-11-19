@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>منجم فيصل: ورشة الحداد</title>
+  <title>منجم : ورشة الحداد</title>
   <style>
     body {
       font-family: sans-serif;
@@ -54,7 +54,7 @@
   </style>
 </head>
 <body>
-  <h1>⛏️ منجم فيصل: ورشة الحداد</h1>
+  <h1>⛏️ منجم : ورشة الحداد</h1>
   <button id="mineBtn" onclick="mine()">اضرب البيكاكس</button>
   <button onclick="sellToWizard()">🧙‍♂️ بيع للساحر</button>
   <div id="result"></div>
@@ -198,3 +198,4 @@ function redeemCode() {
 }
 
 function generateForge()
+
