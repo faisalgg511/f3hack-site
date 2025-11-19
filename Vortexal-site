@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>منجم : ورشة الحداد</title>
+  <title>لعبة المنجم</title>
   <style>
     body {
       font-family: sans-serif;
@@ -21,20 +21,10 @@
       font-size: 18px;
       margin: 10px;
       cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
     }
-    button:disabled {
-      background-color: #aaa;
-      cursor: not-allowed;
-    }
-    button:hover { transform: scale(1.05); }
     #result, #score, #inventory, #shop, #code-result {
       margin-top: 15px;
       font-size: 20px;
-    }
-    #shop-items, #forge-area {
-      margin-top: 10px;
     }
     .item {
       background-color: #f3eaff;
@@ -54,18 +44,15 @@
   </style>
 </head>
 <body>
-  <h1>⛏️ منجم : ورشة الحداد</h1>
-  <button id="mineBtn" onclick="mine()">اضرب البيكاكس</button>
+  <h1>⛏️ لعبة المنجم</h1>
+  <button onclick="mine()">اضرب البيكاكس</button>
   <button onclick="sellToWizard()">🧙‍♂️ بيع للساحر</button>
   <div id="result"></div>
   <div id="score">النقاط: 0</div>
   <div id="inventory">🧺 المخزون: لا شيء بعد</div>
 
-  <h2>🛒 المتجر (يتغير كل دقيقة)</h2>
-  <div id="shop-items"></div>
-
-  <h2>🪓 ورشة الحداد</h2>
-  <div id="forge-area"></div>
+  <h2>🛒 المتجر</h2>
+  <div id="shop"></div>
 
   <h3>🎁 أدخل كود سري:</h3>
   <input type="text" id="code-input" placeholder="اكتب الكود هنا">
@@ -76,50 +63,25 @@
 let score = 0;
 let inventory = {};
 let usedCodes = new Set();
-let canMine = true;
-let currentPickaxe = "خشب";
-
-const pickaxes = {
-  "خشب": { luck: 0 },
-  "حجر": { luck: 5, cost: { "🪨 حجر عادي": 5 } },
-  "حديد": { luck: 10, cost: { "🪨 حجر عادي": 5, "🪙 قولد": 5 } },
-  "ألماس": { luck: 20, cost: { "💎 ألماس": 10, "💚 زمرد": 5 } },
-  "نذرايت": { luck: 30, cost: { "🟪 نذرايت": 10, "💎 ألماس": 10 } }
-};
 
 const items = [
-  { name: "🟪 نذرايت", chance: 0.05, value: 5000 },
-  { name: "💎 ألماس", chance: 0.5, value: 3000 },
-  { name: "🪙 قولد", chance: 2, value: 1500 },
-  { name: "🔴 ريدستون", chance: 4, value: 1000 },
+  { name: "💎 ألماس", chance: 1, value: 3000 },
+  { name: "🪙 قولد", chance: 3, value: 1500 },
+  { name: "🔴 ريدستون", chance: 6, value: 1000 },
   { name: "🪨 حجر عادي", chance: 20, value: 150 },
-  { name: "💚 زمرد", chance: 0.5, value: 4000 },
-  { name: "🧱 حجر رملي", chance: 72.45, value: 50 }
+  { name: "🧱 حجر رملي", chance: 70, value: 50 }
 ];
 
 const codes = {
-  "FaisalPower": { name: "💚 زمرد", value: 4000 },
-  "CMDHunter": { name: "🟪 نذرايت", value: 5000 },
-  "GoldRush": { name: "🪙 قولد", value: 1500 },
-  "tr71": { name: "🟪 نذرايت", value: 10 },
-  "chicken511": { name: "💎 ألماس", value: 500 },
-  "cmdnaggaday": { name: "🟪 نذرايت", value: 100 }
+  "PowerUp": { name: "💎 ألماس", value: 10 },
+  "GoldRush": { name: "🪙 قولد", value: 20 }
 };
 
 function mine() {
-  if (!canMine) return;
-  canMine = false;
-  document.getElementById("mineBtn").disabled = true;
-  setTimeout(() => {
-    canMine = true;
-    document.getElementById("mineBtn").disabled = false;
-  }, 10);
-
-  const luck = pickaxes[currentPickaxe].luck;
   const rand = Math.random() * 100;
   let sum = 0;
   for (let item of items) {
-    sum += item.chance + (item.chance * luck / 100);
+    sum += item.chance;
     if (rand < sum) {
       inventory[item.name] = (inventory[item.name] || 0) + 1;
       document.getElementById("result").innerText = `🎉 حصلت على ${item.name}!`;
@@ -152,17 +114,15 @@ function sellToWizard() {
 }
 
 function generateShop() {
-  const shop = document.getElementById("shop-items");
+  const shop = document.getElementById("shop");
   shop.innerHTML = "";
-  const shuffled = [...items].sort(() => 0.5 - Math.random());
-  const offers = shuffled.slice(0, 3);
-  for (let offer of offers) {
-    const price = offer.value * 2;
+  for (let item of items.slice(0, 3)) {
+    const price = item.value * 2;
     const div = document.createElement("div");
     div.className = "item";
     div.innerHTML = `
-      🛍️ ${offer.name} مقابل ${price} نقطة
-      <button onclick="buyItem('${offer.name}', ${price})">شراء</button>
+      🛍️ ${item.name} مقابل ${price} نقطة
+      <button onclick="buyItem('${item.name}', ${price})">شراء</button>
     `;
     shop.appendChild(div);
   }
@@ -197,5 +157,7 @@ function redeemCode() {
   }
 }
 
-function generateForge()
-
+generateShop();
+</script>
+</body>
+</html>
