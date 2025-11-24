@@ -2,179 +2,33 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>لعبة المنجم</title>
+  <title>تشغيل فيديو تلقائي</title>
   <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      background: linear-gradient(to bottom, #d8c4f3, #b49be0);
-      direction: rtl;
-      color: #2e1f4f;
+    .video-wrapper {
+      position: relative;
+      padding-top: 56.25%; /* نسبة 16:9 */
+      height: 0;
+      overflow: hidden;
+      border-radius: 12px;
     }
-    h1 { font-size: 32px; margin-top: 20px; }
-    button {
-      background-color: #6a4fb3;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 24px;
-      font-size: 18px;
-      margin: 10px;
-      cursor: pointer;
-    }
-    #result, #score, #inventory, #shop, #code-result {
-      margin-top: 15px;
-      font-size: 20px;
-    }
-    .item {
-      background-color: #f3eaff;
-      border: 1px solid #c2aee2;
-      border-radius: 10px;
-      padding: 10px;
-      margin: 10px auto;
-      width: 80%;
-      font-size: 18px;
-    }
-    input {
-      padding: 5px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: 1px solid #aaa;
+    .video-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
     }
   </style>
 </head>
 <body>
-  <h1>⛏️ لعبة المنجم</h1>
-  <button onclick="mine()">اضرب البيكاكس</button>
-  <button onclick="sellToWizard()">🧙‍♂️ بيع للساحر</button>
-  <div id="result"></div>
-  <div id="score">النقاط: 0</div>
-  <div id="inventory">🧺 المخزون: لا شيء بعد</div>
-
-  <h2>🛒 المتجر</h2>
-  <div id="shop"></div>
-
-  <h3>🎁 أدخل كود سري:</h3>
-  <input type="text" id="code-input" placeholder="اكتب الكود هنا">
-  <button onclick="redeemCode()">تفعيل</button>
-  <div id="code-result"></div>
-
-<script>
-let score = 0;
-let inventory = {};
-let usedCodes = new Set();
-
-const items = [
-  { name: "💎 ألماس", chance: 1, value: 3000 },
-  { name: "🪙 قولد", chance: 3, value: 1500 },
-  { name: "🔴 ريدستون", chance: 6, value: 1000 },
-  { name: "🪨 حجر عادي", chance: 20, value: 150 },
-  { name: "🧱 حجر رملي", chance: 70, value: 50 }
-];
-
-const codes = {
-  "diamond100": { name: "💎 ألماس", value: 100 },
-  "goldx50": { name: "🪙 قولد", value: 50 },
-  "startboost": { points: 5000 },
-  "redstoneRain": { name: "🔴 ريدستون", value: 30 },
-  "stoneStack": { name: "🪨 حجر عادي", value: 100 },
-  "sandstorm": { name: "🧱 حجر رملي", value: 200 },
-  "emeraldKing": { name: "💚 زمرد", value: 25 },
-  "ultraCode": { name: "💎 ألماس", value: 200, points: 10000 },
-  "wizardGift": { points: 10000 },
-  "secretBox": { name: "💎 ألماس", value: 50 },
-  "luckyStrike": { name: "🪙 قولد", value: 20 },
-  "mineMaster": { name: "🪨 حجر عادي", value: 10 },
-  "resetBonus": { name: "💎 ألماس", value: 10, points: 2000 }
-};
-
-function mine() {
-  const rand = Math.random() * 100;
-  let sum = 0;
-  for (let item of items) {
-    sum += item.chance;
-    if (rand < sum) {
-      inventory[item.name] = (inventory[item.name] || 0) + 1;
-      document.getElementById("result").innerText = `🎉 حصلت على ${item.name}!`;
-      updateInventory();
-      return;
-    }
-  }
-}
-
-function updateInventory() {
-  let text = "🧺 المخزون:\n";
-  for (let key in inventory) {
-    text += `${key} × ${inventory[key]} | `;
-  }
-  document.getElementById("inventory").innerText = text;
-}
-
-function sellToWizard() {
-  let total = 0;
-  for (let item of items) {
-    if (inventory[item.name]) {
-      total += inventory[item.name] * item.value;
-    }
-  }
-  score += total;
-  inventory = {};
-  document.getElementById("score").innerText = `النقاط: ${score}`;
-  document.getElementById("result").innerText = `💰 بعت كل شيء للساحر بـ ${total} نقطة!`;
-  updateInventory();
-}
-
-function generateShop() {
-  const shop = document.getElementById("shop");
-  shop.innerHTML = "";
-  for (let item of items.slice(0, 3)) {
-    const price = item.value * 2;
-    const div = document.createElement("div");
-    div.className = "item";
-    div.innerHTML = `
-      🛍️ ${item.name} مقابل ${price} نقطة
-      <button onclick="buyItem('${item.name}', ${price})">شراء</button>
-    `;
-    shop.appendChild(div);
-  }
-}
-
-function buyItem(name, price) {
-  if (score >= price) {
-    score -= price;
-    inventory[name] = (inventory[name] || 0) + 1;
-    document.getElementById("score").innerText = `النقاط: ${score}`;
-    updateInventory();
-    document.getElementById("result").innerText = `✅ اشتريت ${name}!`;
-  } else {
-    document.getElementById("result").innerText = "❌ ما عندك نقاط كافية!";
-  }
-}
-
-function redeemCode() {
-  const input = document.getElementById("code-input").value.trim();
-  if (usedCodes.has(input)) {
-    document.getElementById("code-result").innerText = "❌ هذا الكود تم استخدامه من قبل!";
-    return;
-  }
-  if (codes[input]) {
-    const reward = codes[input];
-    if (reward.points) {
-      score += reward.points;
-      document.getElementById("score").innerText = `النقاط: ${score}`;
-    }
-    if (reward.name && reward.value) {
-      inventory[reward.name] = (inventory[reward.name] || 0) + reward.value;
-    }
-    usedCodes.add(input);
-    document.getElementById("code-result").innerText = `🎉 حصلت على مكافأة من الكود ${input}!`;
-    updateInventory();
-  } else {
-    document.getElementById("code-result").innerText = "❌ كود غير صالح";
-  }
-}
-
-generateShop();
-</script>
+  <h2>الفيديو يشتغل تلقائيًا</h2>
+  <div class="video-wrapper">
+    <iframe 
+      src="https://www.youtube.com/embed/KYTsGGUPMdc?autoplay=1&mute=1"
+      title="YouTube video"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen>
+    </iframe>
+  </div>
 </body>
 </html>
