@@ -21,7 +21,7 @@
   </style>
 </head>
 <body>
-  <h2>الفيديو يشتغل تلقائيًا</h2>
+  <h2>ليش تضغطه</h2>
   <div class="video-wrapper">
     <iframe 
       src="https://www.youtube.com/embed/KYTsGGUPMdc?autoplay=1&mute=1"
@@ -32,3 +32,4 @@
   </div>
 </body>
 </html>
+
